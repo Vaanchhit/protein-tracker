@@ -1,0 +1,872 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Protein Powder Price Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: iron-gym ledger. Barbell hero whose plates carry the headline counts, a "best lifts" leaderboard per protein family,
+   then three views (Table / Brands / Compare) under a sticky control bar. Protein families are colour-coded like IWF competition plates. */
+:root{
+  --bg:#141518; --panel:#1d1f23; --panel-2:#25282d; --fg:#f0ede6; --muted:#9a9890; --line:#30333a;
+  --chalk:#f0ede6; --accent:#f2c230; --accent-ink:#1a1608; --good:#5fd08a;
+  --p-whey:#d8382c; --p-plant:#2f9e57; --p-yeast:#e8b923; --p-blend:#2f62c9; --p-dairy:#d9d6cf; --p-other:#6d6f75;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif; --body:"Barlow",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#efede8; --panel:#ffffff; --panel-2:#f5f3ee; --fg:#1b1c1f; --muted:#676760; --line:#dcd9d1;
+  --chalk:#1b1c1f; --accent:#b8860b; --accent-ink:#ffffff; --good:#1d7f45; --p-dairy:#8f8a80; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#efede8; --panel:#ffffff; --panel-2:#f5f3ee; --fg:#1b1c1f; --muted:#676760; --line:#dcd9d1;
+  --chalk:#1b1c1f; --accent:#b8860b; --accent-ink:#ffffff; --good:#1d7f45; --p-dairy:#8f8a80; color-scheme:light}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.dim{color:var(--muted)}
+
+/* ---------- hero ---------- */
+.hero{padding-block:32px 8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(46px,7.5vw,92px);line-height:.88;letter-spacing:.01em;margin:8px 0 14px;text-wrap:balance}
+h1 span{display:block;-webkit-text-stroke:1.5px var(--fg);color:transparent}
+.lede{color:var(--muted);max-width:56ch;margin:0}
+.barbell{width:100%;height:auto;display:block}
+.barbell text{font-family:var(--display);font-weight:800}
+@media (max-width:820px){.hero{grid-template-columns:1fr}}
+
+/* ---------- legend ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:18px 0 0;font-size:13px;color:var(--muted)}
+.legend button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:2px 0}
+.legend button:focus-visible{outline:2px solid var(--accent)}
+.legend button[aria-pressed="true"]{color:var(--fg);font-weight:600}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 3px rgba(0,0,0,.25)}
+
+/* ---------- leaderboard ---------- */
+.section-h{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:28px;letter-spacing:.02em;margin:36px 0 4px}
+.section-sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.lift{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;position:relative;overflow:hidden}
+.lift::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--fam)}
+.lift img,.thumb-ph{width:64px;height:64px;object-fit:contain;background:#fff;border-radius:4px}
+.thumb-ph{display:grid;place-items:center;font-family:var(--display);font-weight:800;color:#555;font-size:20px}
+.lift .lt{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lift .ln{font-weight:600;font-size:14px;line-height:1.3;margin:2px 0 6px;overflow-wrap:anywhere}
+.lift .lv{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}
+.lift .lv b{font-family:var(--mono);color:var(--fg);font-size:14px;font-weight:600}
+.lift .addc{grid-column:1/-1}
+
+/* ---------- goal presets ---------- */
+.goals-h{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:24px 0 8px}
+.goals{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.goal{font:inherit;text-align:left;cursor:pointer;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:baseline}
+.goal b{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:19px;letter-spacing:.03em;line-height:1.1}
+.goal i{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.goal span{grid-column:1/-1;font-size:12.5px;color:var(--muted);line-height:1.35}
+.goal:hover{border-color:var(--accent)}
+.goal[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.goal[aria-pressed="true"] span,.goal[aria-pressed="true"] i{color:var(--accent-ink)}
+
+/* ---------- trust signals ---------- */
+.tb{display:inline-block;font-family:var(--mono);font-size:10px;line-height:1.5;border:1px solid;border-radius:3px;padding:0 4px;margin:3px 4px 0 0;white-space:nowrap;cursor:help}
+.tb.ok{color:var(--good);border-color:var(--good)}
+.tb.warn{color:var(--p-whey);border-color:var(--p-whey)}
+.lbl{font-size:9px;letter-spacing:1px;white-space:nowrap;cursor:help}
+.lbl .off{opacity:.25}
+
+/* ---------- control bar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line);margin-top:36px;padding-block:12px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.tab{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:18px;padding:6px 14px;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:4px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab .badge{font-family:var(--mono);font-size:12px;margin-left:6px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filters input[type=search],.filters select{font:inherit;font-size:14px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:7px 9px;min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.rng{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:4px 9px}
+.rng input{width:100px;accent-color:var(--accent)}
+.rng output{font-family:var(--mono);color:var(--fg);min-width:44px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.chk input{accent-color:var(--accent)}
+.reset{font:inherit;font-size:13px;background:none;border:0;color:var(--accent);cursor:pointer;text-decoration:underline}
+.summary{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:13px;color:var(--muted);margin-top:10px}
+.summary b{font-family:var(--mono);color:var(--fg);font-weight:500}
+.summary .reset{font-size:12px}
+.ftoggle,.msort{display:none}
+.hint{font-size:12.5px;color:var(--muted);margin:14px 0 0;max-width:110ch}
+.hint b{color:var(--fg);font-weight:600}
+.mmeta{display:none}
+@media (min-width:721px){td .sv{display:none}}
+
+/* ---------- table ---------- */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel);margin-top:16px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:1240px}
+thead th{position:sticky;top:0;background:var(--panel-2);font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+thead th.s{cursor:pointer;user-select:none}
+thead th.s:hover{color:var(--fg)}
+thead th[aria-sort]{color:var(--accent)}
+thead th[aria-sort="ascending"]::after{content:" ▲"}
+thead th[aria-sort="descending"]::after{content:" ▼"}
+th.n,td.n{text-align:right}
+tbody td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover td{background:var(--panel-2)}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.key{color:var(--accent);font-weight:600}
+td.img img,td.img .thumb-ph{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:3px;display:block}
+td.img .thumb-ph{font-size:14px}
+.pname{font-weight:600;line-height:1.3;max-width:260px}
+.pbrand{font-size:12px;color:var(--muted)}
+.tchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;white-space:nowrap;color:var(--fg)}
+.flag{font-family:var(--mono);font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:0 4px;margin-left:4px}
+.cmpbox{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.more{display:block;margin:16px auto 0;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:16px;padding:10px 20px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.empty{padding:48px 16px;color:var(--muted);text-align:center}
+
+/* ---------- brands ---------- */
+.brand{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin-top:10px}
+.brand>summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 16px}
+.brand>summary::-webkit-details-marker{display:none}
+.brand>summary::before{content:"+";font-family:var(--display);font-weight:900;font-size:22px;color:var(--accent);width:14px}
+.brand[open]>summary::before{content:"–"}
+.bname{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:24px;letter-spacing:.02em}
+.bmeta{font-size:13px;color:var(--muted)}
+.bmeta b{font-family:var(--mono);color:var(--accent);font-weight:600}
+.bdots{display:flex;gap:4px;margin-left:auto}
+.offer{border-top:1px solid var(--line);padding:14px 16px;display:grid;grid-template-columns:88px minmax(0,1fr);gap:14px}
+.offer>img,.offer>.thumb-ph{width:88px;height:88px;object-fit:contain;background:#fff;border-radius:4px}
+.oname{font-weight:700;font-size:16px}
+.ometa{font-size:13px;color:var(--muted);margin:4px 0 0;max-width:110ch;overflow-wrap:anywhere}
+.ometa strong{color:var(--fg);font-weight:600}
+.mini{overflow-x:auto;margin-top:10px}
+.mini table{min-width:820px;font-size:12.5px}
+.mini thead th{position:static;background:none}
+@media (max-width:560px){.offer{grid-template-columns:1fr}}
+
+/* ---------- compare ---------- */
+.cmp{overflow-x:auto;margin-top:16px}
+.cmpgrid{display:grid;gap:0;border:1px solid var(--line);border-radius:6px;background:var(--panel);min-width:min-content}
+.cmpgrid>div{padding:10px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);font-size:14px;min-width:0}
+.cmpgrid .rl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--panel-2);position:sticky;left:0;z-index:1}
+.cmpgrid .hd{text-align:center}
+.cmpgrid .hd img,.cmpgrid .hd .thumb-ph{width:110px;height:110px;object-fit:contain;background:#fff;border-radius:4px;margin:0 auto 8px;display:block}
+.cmpgrid .hd .t{font-weight:700;line-height:1.3}
+.cmpgrid .hd .b{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:18px;color:var(--accent)}
+.cmpgrid .v{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.cmpgrid .win{color:var(--good);font-weight:600}
+.cmpgrid .win::after{content:" ●";font-size:10px}
+.cmpgrid .txt{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.rm{font:inherit;font-size:12px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:3px;padding:2px 8px;cursor:pointer;margin-top:8px}
+.cmp-empty{border:2px dashed var(--line);border-radius:6px;padding:40px 16px;text-align:center;color:var(--muted);margin-top:16px}
+.cmp-empty b{display:block;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:26px;color:var(--fg);margin-bottom:6px}
+
+/* ---------- tray ---------- */
+.tray{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--panel-2);border-top:2px solid var(--accent);padding-block:10px calc(10px + env(safe-area-inset-bottom,0px))}
+.tray .wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tray .slots{display:flex;gap:8px;flex:1 1 auto;min-width:0;overflow-x:auto}
+.slot{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:4px 6px;font-size:12px;max-width:220px;flex:none}
+.slot img,.slot .thumb-ph{width:28px;height:28px;object-fit:contain;background:#fff;border-radius:2px;font-size:11px}
+.slot span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot button{all:unset;cursor:pointer;color:var(--muted);padding:0 4px}
+.go{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:17px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:4px;padding:8px 16px;cursor:pointer}
+.foot{font-size:12px;color:var(--muted);padding-block:32px 120px;max-width:100ch}
+.foot p{margin:0 0 14px}
+.notes{margin:0 0 18px}
+.notes>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg);padding:4px 0}
+.notes>summary::-webkit-details-marker{display:none}
+.notes>summary::before{content:"+";font-family:var(--display);font-weight:900;font-size:20px;line-height:1;color:var(--accent);width:12px}
+.notes[open]>summary::before{content:"–"}
+.notes[open]>summary{margin-bottom:10px}
+.credit{font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.credit .heart{color:var(--p-whey)}
+
+/* ---------- spotter chat ---------- */
+.ask{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--tray-h,0px) + 16px + env(safe-area-inset-bottom,0px));z-index:40;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.chat{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--tray-h,0px) + 70px + env(safe-area-inset-bottom,0px));z-index:40;width:min(400px,calc(100vw - 32px));height:min(560px,calc(100dvh - var(--tray-h,0px) - 100px));display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.chat-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.chat-h b{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:22px;letter-spacing:.03em;line-height:1}
+.chat-h small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.chat-x{all:unset;cursor:pointer;color:var(--muted);font-size:18px;padding:4px 6px}
+.chat-log{flex:1;position:relative;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.msg{font-size:14px;line-height:1.45;max-width:94%;overflow-wrap:anywhere}
+.msg p{margin:0 0 6px}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);padding:7px 11px;border-radius:6px 6px 2px 6px}
+.msg.bot{align-self:flex-start;background:var(--panel-2);border:1px solid var(--line);padding:9px 11px;border-radius:6px 6px 6px 2px}
+.msg.bot b{font-family:var(--mono);font-weight:600}
+.hit{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.hit img,.hit .thumb-ph{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:3px;font-size:14px}
+.hit .hn{font-weight:600;font-size:13px;line-height:1.3}
+.hit .hm{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 10px;align-items:center}
+.hit .hm b{font-family:var(--mono);color:var(--fg);font-weight:600}
+.hit .ha{display:flex;gap:12px;align-items:center;font-size:12px;margin-top:4px}
+.hit .ha label{display:flex;align-items:center;gap:5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font:inherit;font-size:12px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 9px;cursor:pointer;text-align:left}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.act{border-color:var(--accent);color:var(--accent)}
+.chat-f{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--line)}
+.chat-f input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.chat-f .go{font-size:15px;padding:6px 14px}
+
+/* ---------- laptop / tablet widths: compact text columns and pin the product name while scrolling sideways ---------- */
+@media (min-width:721px){
+  .tblwrap td.c-name,.tblwrap thead th:nth-child(3){position:sticky;left:0;z-index:1;background:var(--panel);box-shadow:1px 0 0 var(--line)}
+  .tblwrap thead th:nth-child(3){z-index:3;background:var(--panel-2)}
+  .tblwrap td.c-link{white-space:nowrap}
+}
+@media (max-width:1500px) and (min-width:721px){
+  .tblwrap thead th{vertical-align:bottom;line-height:1.3}
+  .tblwrap table{min-width:1100px}
+  .tblwrap .pname{max-width:220px}
+  .tblwrap td.c-type .tchip{white-space:normal;max-width:130px;align-items:flex-start}
+  .tblwrap td.c-type .dot{margin-top:2px}
+  .tblwrap td.c-flav{max-width:110px}
+}
+
+/* ---------- phone layout ---------- */
+@media (max-width:720px){
+  .goals{grid-auto-flow:column;grid-auto-columns:minmax(200px,72%);grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+  .goal{scroll-snap-align:start}
+  .bar{padding-block:8px;margin-top:28px}
+  .tabs{margin-bottom:8px}
+  .tab{font-size:16px;padding:5px 10px}
+  .filters input[type=search]{flex:1 1 100%}
+  .ftoggle{display:inline-block;flex:1 1 0;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:15px;padding:6px 12px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:4px;cursor:pointer}
+  .ftoggle[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+  .filters .msort{display:block;flex:1.4 1 0}
+  .filters:not(.open)>:not(#q):not(.ftoggle):not(.msort){display:none}
+  .filters.open{max-height:55vh;overflow-y:auto}
+  .filters.open select:not(.msort),.filters.open .rng{flex:1 1 100%}
+  .rng input{flex:1;width:auto}
+  .summary{gap:2px 14px;font-size:12px;margin-top:8px}
+  /* table rows become cards */
+  .tblwrap{overflow:visible;border:0;background:none}
+  .tblwrap table{min-width:0}
+  .tblwrap table,.tblwrap tbody{display:block}
+  .tblwrap thead{display:none}
+  .tblwrap tbody tr{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 8px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:10px}
+  .tblwrap tbody td{padding:0;border:0;background:none!important;text-align:left;white-space:normal}
+  .tblwrap td.c-type,.tblwrap td.c-flav,.tblwrap td.c-size,.tblwrap td.c-mrp,.tblwrap td.c-disc,.tblwrap td.c-pkg,.tblwrap td.c-scoop,.tblwrap td.c-bcaa{display:none}
+  .tblwrap td.img{grid-column:span 1;order:1}
+  .tblwrap td.c-name{grid-column:span 5;order:2}
+  .tblwrap td.c-name .pname{max-width:none}
+  .tblwrap td[data-l]{grid-column:span 2;order:3}
+  .tblwrap td[data-l]::before{content:attr(data-l);display:block;font-family:var(--body);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:400}
+  .tblwrap td.c-cmp{grid-column:span 3;order:4;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+  .tblwrap td.c-cmp::after{content:"Compare"}
+  .tblwrap td.c-link{grid-column:span 3;order:5;text-align:right;align-self:center}
+  .tblwrap td .sv{display:block;font-size:11px}
+  .ask{font-size:15px;padding:7px 12px}
+  .mmeta{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:var(--muted);margin-top:3px}
+  .cmpgrid{--rl:92px;--cw:150px}
+  .cmpgrid>div{padding:8px;font-size:13px}
+  .cmpgrid .tchip{white-space:normal;align-items:flex-start}
+  .cmpgrid .hd img,.cmpgrid .hd .thumb-ph{width:76px;height:76px}
+  .bname{font-size:20px}
+  .brand>summary{padding:10px 12px}
+  .offer{padding:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">India · prices as of 20 Oct 2026</div>
+      <h1>Protein<span>Price</span>Atlas</h1>
+      <p class="lede">Every whey, plant, yeast, egg and casein powder I could find on Amazon India, priced per 36&nbsp;g scoop. Sort the whole rack, open any brand's line-up, or put up to four tubs side by side.</p>
+    </div>
+    <svg class="barbell" viewBox="0 0 640 230" role="img" aria-label="Barbell with plates showing brand, product line, listing and protein type counts" id="barbell"></svg>
+  </header>
+  <div class="legend" id="legend" aria-label="Filter by protein family"></div>
+
+  <div class="goals-h" id="goals-h">Start with a goal</div>
+  <div class="goals" id="goals" role="group" aria-labelledby="goals-h"></div>
+
+  <h2 class="section-h">Best lifts by protein family</h2>
+  <p class="section-sub">Cheapest ₹ per 36 g scoop and most protein per ₹100, among listings that state protein. Outliers and red-flagged listings excluded.</p>
+  <div class="board" id="board"></div>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-table" aria-selected="true">Table</button>
+      <button class="tab" role="tab" id="tab-brands" aria-selected="false">Brands</button>
+      <button class="tab" role="tab" id="tab-compare" aria-selected="false">Compare<span class="badge" id="cmpCount">0/4</span></button>
+    </div>
+    <div class="filters" id="filters">
+      <input id="q" type="search" placeholder="Search brand, product, flavour, ingredient…" aria-label="Search">
+      <button class="ftoggle" id="ftoggle" type="button" aria-expanded="false" aria-controls="filters">Filters</button>
+      <select class="msort" id="msort" aria-label="Sort by">
+        <option value="p100:-1">Sort: best value</option><option value="p36:1">Sort: cheapest / 36 g</option><option value="prot36:-1">Sort: most protein</option>
+        <option value="trust:-1">Sort: most trustworthy</option><option value="disc:-1">Sort: biggest discount</option><option value="price:1">Sort: lowest price</option>
+        <option value="" hidden>Sort: custom</option>
+      </select>
+      <select id="type" aria-label="Protein type"><option value="">All protein types</option></select>
+      <select id="brand" aria-label="Brand"><option value="">All brands</option></select>
+      <select id="pack" aria-label="Pack size">
+        <option value="">Any pack size</option><option value="0-450">Under 500 g</option><option value="450-1100">500 g – 1 kg</option>
+        <option value="1100-2100">1 – 2 kg</option><option value="2100-99999">Over 2 kg</option>
+      </select>
+      <label class="rng">Max ₹/36g <input id="maxp" type="range" min="20" max="400" step="5" value="400"><output id="maxpO">any</output></label>
+      <label class="rng">Min protein/36g <input id="minpr" type="range" min="0" max="32" step="1" value="0"><output id="minprO">any</output></label>
+      <label class="chk"><input id="needP" type="checkbox"> Protein stated</label>
+      <label class="chk"><input id="needB" type="checkbox"> BCAA stated</label>
+      <label class="chk"><input id="hideOut" type="checkbox" checked> Hide outliers</label>
+      <label class="chk"><input id="needLab" type="checkbox"> Lab-test claim</label>
+      <label class="chk"><input id="hideFlag" type="checkbox"> Hide red flags</label>
+      <button class="reset" id="reset" type="button">Reset filters</button>
+    </div>
+    <div class="summary" id="summary"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section id="view-table"></section>
+  <section id="view-brands" hidden></section>
+  <section id="view-compare" hidden></section>
+  <footer class="foot"><details class="notes"><summary>How the numbers &amp; trust signals work</summary><p>How the numbers work: ₹/36 g = selling price ÷ net weight × 36. Protein and BCAA per 36 g are scaled from the listed scoop size; where Amazon gives no scoop size it is derived from net weight ÷ servings (marked *). "Protein per ₹100" = protein per 36 g ÷ ₹/36 g × 100, the clearest value-for-money figure. Protein type is inferred from the title and ingredients. Outliers are sachets, trial packs and imports priced over ₹400 or under ₹15 per scoop. Prices drift daily; check the Amazon link before buying.</p>
+    <p>How the trust signals work: <span class="tb ok">Lab-test claim</span> means the listing cites a third-party test (Trustified, Labdoor, Informed Choice/Sport or similar). That is the seller's claim, not something verified here. <span class="tb warn">Too cheap?</span> marks dairy proteins giving over 60 g of protein per ₹100, far above the rest of the market. <span class="tb warn">Added aminos</span> means the ingredients list free glycine, taurine, glutamine or arginine, which some brands use to inflate protein figures ("amino spiking"). <span class="tb warn">Protein % high</span> marks a label claiming over 92% protein per serving, and <span class="tb warn">Unbranded</span> means no brand stands behind the listing. The label dots (●●●●) count how many of these the listing states: protein, serving size, BCAA and ingredients. Treat red flags as prompts to check reviews or a lab report, not as verdicts.</p>
+    <p><b>Label serving vs 36 g:</b> "label serving" is the scoop size the brand prints, which ranges from about 25 g to 50 g. Every "/ 36 g" column rescales to one standard scoop so products compare fairly.</p></details>
+    <p class="credit">Created with <span class="heart" aria-label="love">♥</span> by <a href="https://www.linkedin.com/in/vaanchhit-agarwal-549036296/" target="_blank" rel="noopener">Vaanchhit</a></p></footer>
+</main>
+
+<button class="go ask" id="ask" type="button" aria-expanded="false" aria-controls="chat">Ask Spotter</button>
+<section class="chat" id="chat" role="dialog" aria-label="Spotter, product finder chat" hidden>
+  <div class="chat-h"><div><b>Spotter</b><small>Ask in plain words · keyword finder</small></div><button class="chat-x" id="chatX" type="button" aria-label="Close chat">✕</button></div>
+  <div class="chat-log" id="chatLog" aria-live="polite"></div>
+  <form class="chat-f" id="chatF"><input id="chatIn" type="text" autocomplete="off" placeholder="e.g. cheapest chocolate whey isolate" aria-label="Ask Spotter"><button class="go" type="submit">Go</button></form>
+</section>
+
+<div class="tray" id="tray" hidden><div class="wrap"><div class="slots" id="slots"></div><button class="go" id="goCmp" type="button">Compare →</button><button class="reset" id="clrCmp" type="button">Clear</button></div></div>
+
+<script src="data.js"></script>
+<script src="images.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const IMG = window.IMG || {};
+const RAW = window.DATA || [];
+
+// ---------- protein families (IWF plate colours) ----------
+const FAM = [
+  {k:'whey',  label:'Whey',          v:'--p-whey',  test:t => /^Whey/.test(t)},
+  {k:'plant', label:'Plant / Pea / Soy', v:'--p-plant', test:t => /^(Plant|Pea|Soy)/.test(t)},
+  {k:'yeast', label:'Yeast',         v:'--p-yeast', test:t => /^Yeast/.test(t)},
+  {k:'blend', label:'Multi-source blends', v:'--p-blend', test:t => /^Multi/.test(t)},
+  {k:'dairy', label:'Casein / Egg / Milk', v:'--p-dairy', test:t => /^(Casein|Egg|Milk)/.test(t)},
+  {k:'other', label:'Health drinks & other', v:'--p-other', test:() => true},
+];
+const famOf = t => FAM.find(f => f.test(t));
+const dot = t => `<span class="dot" style="background:var(${famOf(t).v})"></span>`;
+
+// ---------- flatten ----------
+const ROWS = [];
+RAW.forEach(b => b.offerings.forEach((o, oi) => o.variants.forEach((v, vi) => {
+  const id = v.url.split('/').pop() + ':' + vi;
+  const grams = v.p36 && v.price ? v.price / v.p36 * 36 : null;
+  const p100 = v.prot36 && v.p36 ? v.prot36 / v.p36 * 100 : null;
+  ROWS.push({id, brand:b.brand, name:o.name, type:o.type, fam:famOf(o.type).k, flavours:o.flavours, ingredients:o.ingredients, img:o.img,
+    flavour:v.flavour, size:v.size, grams, price:v.price, mrp:v.mrp, disc:v.mrp && v.price && v.mrp > v.price ? (1 - v.price / v.mrp) * 100 : 0,
+    p36:v.p36, pkg:v.p36 ? v.p36 / 36 * 1000 : null, prot:v.prot, scoop:v.scoop, derived:v.scoop_src === 'net wt / servings',
+    prot36:v.prot36, p100, bcaa:v.bcaa, bcaa36:v.bcaa36, outlier:v.outlier, url:v.url, title:v.title,
+    hay:(b.brand + ' ' + o.name + ' ' + o.type + ' ' + v.flavour + ' ' + o.flavours.join(' ') + ' ' + o.ingredients + ' ' + v.title).toLowerCase()});
+})));
+const byId = Object.fromEntries(ROWS.map(r => [r.id, r]));
+
+// ---------- trust & quality signals (heuristics from the listing text, not lab verification) ----------
+const LAB = /trustified|labdoor|informed[- ](choice|sport)|third[- ]party (lab[- ])?test|lab[- ]tested|nabl/i;
+const AMINO = /glycine|taurine|glutamine|arginine/i;
+const FLAG = {
+  cheap:['Too cheap?', 'Gives far more protein per ₹100 than other dairy proteins. Possible, but check a lab report or reviews before buying.'],
+  amino:['Added aminos', 'Ingredients list free amino acids (glycine, taurine, glutamine or arginine). Some brands add these to inflate the protein number ("amino spiking").'],
+  pct:['Protein % high', 'Label claims over 92% protein per serving, more than even pure isolate delivers.'],
+  unbranded:['Unbranded', 'No brand stands behind this listing.']};
+ROWS.forEach(r => {
+  r.lab = LAB.test(r.title + ' ' + r.ingredients);
+  r.label = (r.prot ? 1 : 0) + (r.scoop && !r.derived ? 1 : 0) + (r.bcaa ? 1 : 0) + (r.ingredients ? 1 : 0);
+  r.flags = [];
+  if (r.p100 > 60 && /^(whey|blend|dairy)$/.test(r.fam)) r.flags.push('cheap');
+  if (AMINO.test(r.ingredients)) r.flags.push('amino');
+  if (r.prot && r.scoop && !r.derived && r.prot / r.scoop > .92) r.flags.push('pct');
+  if (/^generic/i.test(r.brand)) r.flags.push('unbranded');
+  r.trust = (r.lab ? 3 : 0) + r.label - r.flags.length * 3;
+});
+const badges = r => (r.lab ? `<span class="tb ok" title="Listing cites a third-party lab test (Trustified, Labdoor, Informed Choice/Sport or similar). Seller's claim, not verified here.">Lab-test claim</span>` : '') +
+  r.flags.map(f => `<span class="tb warn" title="${esc(FLAG[f][1])}">${FLAG[f][0]}</span>`).join('');
+const labelDots = r => `<span class="lbl" title="Label transparency: ${r.label} of 4 stated (protein, serving size, BCAA, ingredients)">${'●'.repeat(r.label)}<span class="off">${'●'.repeat(4 - r.label)}</span></span>`;
+
+// ---------- goal presets ----------
+const DAIRYFREE = r => r.fam === 'plant' || r.type === 'Yeast Protein' || r.type === 'Multi-source Blend (Yeast + Plant)';
+const PRESETS = [
+  {k:'budget', l:'Budget gains', d:'Most protein per ₹100, no red flags', sort:{k:'p100', dir:-1},
+    test:r => r.prot && !r.flags.length && r.fam !== 'other', kw:/budget gain|bulking|on a budget|student|tight budget|mass gain/},
+  {k:'lean', l:'Lean & cutting', d:'Isolates & hydrolysates, most protein per scoop', sort:{k:'prot36', dir:-1},
+    test:r => /^Whey (Isolate|Hydrolysate)$/.test(r.type), kw:/cutting|\bcut\b|fat loss|weight loss|shred/},
+  {k:'gentle', l:'Easy on the stomach', d:'Low-lactose isolates, plant, yeast & egg', sort:{k:'p100', dir:-1},
+    test:r => /^Whey (Isolate|Hydrolysate)$/.test(r.type) || DAIRYFREE(r) || r.type === 'Egg White Protein', kw:/lactose|bloat|stomach|gas\b|acidity|sensitive/},
+  {k:'vegan', l:'Vegan', d:'Plant & yeast proteins only', sort:{k:'p100', dir:-1}, test:DAIRYFREE, kw:/vegan|dairy[- ]free|no dairy|non[- ]dairy/},
+  {k:'first', l:'First tub', d:'Flavoured whey, ~1 kg, clear label, no red flags', sort:{k:'p100', dir:-1},
+    test:r => r.fam === 'whey' && r.flavour && !/unflav|plain|raw/i.test(r.flavour) && !/Raw/.test(r.type) && r.grams >= 900 && r.grams <= 1100 && r.label >= 2 && !r.flags.length,
+    kw:/beginner|first time|first tub|new to|starter|starting out|newbie/},
+  {k:'night', l:'Bedtime', d:'Slow-digesting casein & casein blends', sort:{k:'p36', dir:1}, test:r => /Casein/.test(r.type), kw:/bedtime|night|sleep|slow[- ](release|digest)/},
+  {k:'tested', l:'Lab-tested', d:'Cites a third-party lab test, no red flags', sort:{k:'p100', dir:-1},
+    test:r => r.lab && !r.flags.length, kw:/lab[- ]?test|tested|trustified|labdoor|genuine|authentic|safest|trusted|third[- ]party|\bsafe\b/},
+  {k:'trial', l:'Try it first', d:'Packs under 600 g, cheapest per scoop', sort:{k:'p36', dir:1},
+    test:r => r.grams && r.grams < 600, kw:/trial|try (it|first|before)|small pack|sample/},
+];
+const PRE = Object.fromEntries(PRESETS.map(p => [p.k, p]));
+
+const thumb = (r, cls = '') => IMG[r.img] ? `<img src="${IMG[r.img]}" alt="" loading="lazy" class="${cls}">` : `<div class="thumb-ph ${cls}">${esc(r.brand[0] || '?')}</div>`;
+const rs = v => v == null ? '<span class="dim">—</span>' : '₹' + Math.round(v).toLocaleString('en-IN');
+const gm = (v, d = 1) => v == null ? '<span class="dim">—</span>' : (+v).toFixed(v % 1 ? d : 0) + ' g';
+const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+
+// ---------- hero barbell ----------
+(function barbell() {
+  const nBrands = RAW.length, nLines = RAW.reduce((a, b) => a + b.offerings.length, 0), nTypes = new Set(ROWS.map(r => r.type)).size;
+  const plates = [
+    {n:ROWS.length, l:'LISTINGS', c:'--p-whey', h:200}, {n:nLines, l:'PRODUCTS', c:'--p-blend', h:176},
+    {n:nBrands, l:'BRANDS', c:'--p-yeast', h:150}, {n:nTypes, l:'TYPES', c:'--p-plant', h:124}];
+  let s = `<rect x="20" y="108" width="600" height="14" rx="3" fill="var(--muted)"/>
+    <rect x="210" y="104" width="220" height="22" rx="2" fill="var(--muted)" opacity=".7"/>
+    ${Array.from({length:22}, (_, i) => `<line x1="${222 + i * 9}" y1="106" x2="${226 + i * 9}" y2="124" stroke="var(--bg)" stroke-width="1.5" opacity=".5"/>`).join('')}`;
+  let x = 196;
+  plates.forEach(p => { const w = 36; x -= w + 4;
+    s += `<rect x="${x}" y="${115 - p.h / 2}" width="${w}" height="${p.h}" rx="5" fill="var(${p.c})"/>
+      <text x="${x + w / 2}" y="115" fill="#fff" font-size="21" text-anchor="middle" dominant-baseline="central" transform="rotate(-90 ${x + w / 2} 115)">${p.n.toLocaleString('en-IN')} ${p.l}</text>`; });
+  s += `<rect x="${x - 14}" y="100" width="12" height="30" rx="2" fill="var(--fg)"/>`;
+  x = 444;
+  [...plates].forEach(p => { const w = 36;
+    s += `<rect x="${x}" y="${115 - p.h / 2}" width="${w}" height="${p.h}" rx="5" fill="var(${p.c})"/>`; x += w + 4; });
+  s += `<rect x="${x + 2}" y="100" width="12" height="30" rx="2" fill="var(--fg)"/>`;
+  $('barbell').innerHTML = s;
+})();
+
+// ---------- state ----------
+const F = {q:'', type:'', brand:'', pack:'', maxp:400, minpr:0, needP:false, needB:false, hideOut:true, needLab:false, hideFlag:false, fam:'', preset:''};
+let sort = {k:'p36', dir:1}, view = 'table', limit = 120;
+let CMP = [];
+try { CMP = JSON.parse(localStorage.getItem('ppa-cmp') || '[]').filter(id => byId[id]).slice(0, 4); } catch (e) {}
+const saveCmp = () => { try { localStorage.setItem('ppa-cmp', JSON.stringify(CMP)); } catch (e) {} };
+
+// ---------- controls ----------
+[...new Set(ROWS.map(r => r.type))].sort().forEach(t => $('type').insertAdjacentHTML('beforeend', `<option>${esc(t)}</option>`));
+[...new Set(ROWS.map(r => r.brand))].sort((a, b) => a.localeCompare(b)).forEach(b => $('brand').insertAdjacentHTML('beforeend', `<option>${esc(b)}</option>`));
+$('legend').innerHTML = FAM.map(f => `<button type="button" data-fam="${f.k}" aria-pressed="false"><span class="dot" style="background:var(${f.v})"></span>${f.label} <span class="mono">${ROWS.filter(r => r.fam === f.k).length}</span></button>`).join('');
+$('legend').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
+  F.fam = F.fam === b.dataset.fam ? '' : b.dataset.fam; limit = 120; renderAll(); });
+
+function readControls() {
+  F.q = $('q').value.trim().toLowerCase(); F.type = $('type').value; F.brand = $('brand').value; F.pack = $('pack').value;
+  F.maxp = +$('maxp').value; F.minpr = +$('minpr').value; F.needP = $('needP').checked; F.needB = $('needB').checked; F.hideOut = $('hideOut').checked;
+  F.needLab = $('needLab').checked; F.hideFlag = $('hideFlag').checked;
+  $('maxpO').textContent = F.maxp >= 400 ? 'any' : '₹' + F.maxp; $('minprO').textContent = F.minpr ? F.minpr + ' g' : 'any';
+  const n = [F.type, F.brand, F.pack, F.maxp < 400, F.minpr, F.needP, F.needB, !F.hideOut, F.needLab, F.hideFlag].filter(Boolean).length;
+  $('ftoggle').textContent = n ? `Filters · ${n}` : 'Filters';
+}
+['q', 'type', 'brand', 'pack', 'maxp', 'minpr', 'needP', 'needB', 'hideOut', 'needLab', 'hideFlag'].forEach(id => $(id).addEventListener('input', () => { readControls(); limit = 120; renderAll(); }));
+function resetControls() {
+  $('q').value = ''; $('type').value = ''; $('brand').value = ''; $('pack').value = ''; $('maxp').value = 400; $('minpr').value = 0;
+  $('needP').checked = $('needB').checked = $('needLab').checked = $('hideFlag').checked = false; $('hideOut').checked = true; F.fam = ''; F.preset = ''; readControls();
+}
+$('reset').addEventListener('click', () => { resetControls(); renderAll(); });
+$('ftoggle').addEventListener('click', () => { const o = $('filters').classList.toggle('open'); $('ftoggle').setAttribute('aria-expanded', o); });
+$('msort').addEventListener('change', e => { if (!e.target.value) return; const [k, d] = e.target.value.split(':'); sort = {k, dir:+d}; renderAll(); });
+
+$('goals').innerHTML = PRESETS.map(p => `<button type="button" class="goal" data-goal="${p.k}" aria-pressed="false"><b>${p.l}</b><i>${ROWS.filter(r => !r.outlier && p.test(r)).length}</i><span>${p.d}</span></button>`).join('');
+function applyGoal(k) {
+  resetControls(); F.preset = k;
+  if (k) sort = {...PRE[k].sort};
+  setView('table');
+  if (k) document.querySelector('.bar').scrollIntoView({behavior:'smooth'});
+}
+$('goals').addEventListener('click', e => { const b = e.target.closest('[data-goal]'); if (b) applyGoal(F.preset === b.dataset.goal ? '' : b.dataset.goal); });
+$('summary').addEventListener('click', e => { if (e.target.closest('[data-clear-goal]')) { F.preset = ''; renderAll(); } });
+
+function filtered() {
+  const [pl, ph] = F.pack ? F.pack.split('-').map(Number) : [0, 1e9];
+  return ROWS.filter(r =>
+    (!F.hideOut || !r.outlier) && (!F.type || r.type === F.type) && (!F.brand || r.brand === F.brand) && (!F.fam || r.fam === F.fam) &&
+    (!F.pack || (r.grams && r.grams >= pl && r.grams < ph)) && (F.maxp >= 400 || (r.p36 != null && r.p36 <= F.maxp)) &&
+    (!F.minpr || (r.prot36 != null && r.prot36 >= F.minpr)) && (!F.needP || r.prot) && (!F.needB || r.bcaa) && (!F.q || r.hay.includes(F.q)) &&
+    (!F.needLab || r.lab) && (!F.hideFlag || !r.flags.length) && (!F.preset || PRE[F.preset].test(r)));
+}
+
+// ---------- compare ----------
+function toggleCmp(id) {
+  const i = CMP.indexOf(id);
+  if (i >= 0) CMP.splice(i, 1); else if (CMP.length < 4) CMP.push(id); else { CMP.shift(); CMP.push(id); }
+  saveCmp(); renderTray(); if (view === 'compare') renderCompare();
+  document.querySelectorAll(`input.cmpbox[data-id="${CSS.escape(id)}"]`).forEach(b => b.checked = CMP.includes(id));
+}
+document.addEventListener('change', e => { if (e.target.matches('input.cmpbox')) toggleCmp(e.target.dataset.id); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) toggleCmp(b.dataset.rm); });
+const cbox = r => `<input type="checkbox" class="cmpbox" data-id="${esc(r.id)}" aria-label="Add to compare" ${CMP.includes(r.id) ? 'checked' : ''}>`;
+
+function renderTray() {
+  $('cmpCount').textContent = CMP.length + '/4';
+  $('tray').hidden = !CMP.length || view === 'compare';
+  $('slots').innerHTML = CMP.map(id => { const r = byId[id];
+    return `<div class="slot">${thumb(r)}<span>${esc(r.brand)} · ${esc(r.size)}</span><button type="button" data-rm="${esc(id)}" aria-label="Remove">✕</button></div>`; }).join('');
+  trayH();
+}
+// lift the chat launcher above the compare tray when it is showing
+const trayH = () => document.documentElement.style.setProperty('--tray-h', $('tray').hidden ? '0px' : $('tray').offsetHeight + 'px');
+addEventListener('resize', trayH);
+$('goCmp').addEventListener('click', () => setView('compare'));
+$('clrCmp').addEventListener('click', () => { CMP = []; saveCmp(); renderTray(); renderAll(); });
+
+// ---------- leaderboard ----------
+function renderBoard() {
+  const pool = ROWS.filter(r => !r.outlier && r.prot && r.p36 && !r.flags.length);
+  $('board').innerHTML = FAM.filter(f => f.k !== 'other').map(f => {
+    const L = pool.filter(r => r.fam === f.k); if (!L.length) return '';
+    const cheap = L.reduce((a, b) => b.p36 < a.p36 ? b : a);
+    const valued = L.filter(r => r.p100); const val = valued.length ? valued.reduce((a, b) => b.p100 > a.p100 ? b : a) : null;
+    const card = (r, lbl, big) => `<div class="lift" style="--fam:var(${f.v})">${thumb(r)}<div><div class="lt">${f.label} · ${lbl}</div>
+      <div class="ln">${esc(r.brand)} ${esc(r.name)} <span class="dim">${esc(r.size)}</span></div>
+      <div class="lv">${big}</div>${badges(r) ? `<div>${badges(r)}</div>` : ''}</div>
+      <label class="chk addc">${cbox(r)} Add to compare · <a href="${esc(r.url)}" target="_blank" rel="noopener">Amazon ↗</a></label></div>`;
+    let h = card(cheap, 'cheapest scoop', `<span><b>${rs(cheap.p36)}</b> / 36 g</span><span><b>${gm(cheap.prot)}</b> protein / label serving</span>`);
+    if (val && val.id !== cheap.id) h += card(val, 'most protein per ₹', `<span><b>${val.p100.toFixed(1)} g</b> per ₹100</span><span><b>${rs(val.p36)}</b> / 36 g</span>`);
+    return h;
+  }).join('');
+}
+
+// ---------- table ----------
+const COLS = [
+  {k:null, l:'', cls:''}, {k:null, l:'', cls:''},
+  {k:'brand', l:'Brand / product'}, {k:'type', l:'Type'}, {k:'flavour', l:'Flavour'},
+  {k:'grams', l:'Pack', n:1}, {k:'price', l:'Price', n:1}, {k:'mrp', l:'MRP', n:1}, {k:'disc', l:'Off', n:1},
+  {k:'p36', l:'₹ / 36 g', n:1, t:'Price for a standard 36 g scoop, so every tub compares fairly'}, {k:'pkg', l:'₹ / kg', n:1},
+  {k:'prot', l:'Protein /<br>label serving', n:1, t:'Protein per serving as printed by the brand. Serving sizes differ, so compare with Protein / 36 g'},
+  {k:'scoop', l:'Label<br>serving', n:1, t:'Serving size printed by the brand. * = worked out from net weight ÷ servings'},
+  {k:'prot36', l:'Protein / 36 g', n:1, t:'Protein in a standard 36 g scoop'}, {k:'p100', l:'Protein / ₹100', n:1, t:'Grams of protein ₹100 buys you. Higher is better value'},
+  {k:'bcaa36', l:'BCAA / 36 g', n:1}, {k:'trust', l:'Label', n:1, t:'Label transparency (protein, serving size, BCAA, ingredients stated). Sorts by overall trust'}, {k:null, l:''}];
+
+function sorted(list) {
+  const {k, dir} = sort;
+  return [...list].sort((a, b) => {
+    const x = a[k], y = b[k];
+    if (x == null || x === '') return 1; if (y == null || y === '') return -1;
+    return (typeof x === 'string' ? x.localeCompare(y) : x - y) * dir;
+  });
+}
+
+function renderTable(list) {
+  const rows = sorted(list).slice(0, limit);
+  const head = COLS.map(c => c.k ? `<th class="s${c.n ? ' n' : ''}" data-k="${c.k}" ${sort.k === c.k ? `aria-sort="${sort.dir > 0 ? 'ascending' : 'descending'}"` : ''} tabindex="0"${c.t ? ` title="${esc(c.t)}"` : ''}>${c.l}</th>` : `<th>${c.l}</th>`).join('');
+  const body = rows.map(r => `<tr>
+    <td class="c-cmp">${cbox(r)}</td><td class="img">${thumb(r)}</td>
+    <td class="c-name"><div class="pname">${esc(r.name)}</div><div class="pbrand">${esc(r.brand)}</div>
+      <div class="mmeta"><span class="tchip">${dot(r.type)}${esc(r.type)}</span><span>${esc(r.size)}${r.flavour ? ' · ' + esc(r.flavour) : ''}</span>${r.disc >= 1 ? `<span>${Math.round(r.disc)}% off</span>` : ''}</div>${badges(r)}</td>
+    <td class="c-type"><span class="tchip">${dot(r.type)}${esc(r.type)}</span></td>
+    <td class="c-flav">${esc(r.flavour) || '<span class="dim">—</span>'}</td>
+    <td class="n c-size">${esc(r.size)}</td><td class="n" data-l="Price">${rs(r.price)}</td><td class="n dim c-mrp">${rs(r.mrp)}</td>
+    <td class="n c-disc">${r.disc >= 1 ? Math.round(r.disc) + '%' : '<span class="dim">—</span>'}</td>
+    <td class="n key" data-l="₹ / 36 g">${rs(r.p36)}${r.outlier ? '<span class="flag">outlier</span>' : ''}</td>
+    <td class="n c-pkg">${rs(r.pkg)}</td><td class="n" data-l="Protein / serving">${gm(r.prot)}${r.scoop ? ` <span class="dim sv">in ${gm(r.scoop)}${r.derived ? '*' : ''}</span>` : ''}</td>
+    <td class="n c-scoop">${r.scoop ? gm(r.scoop) + (r.derived ? '*' : '') : '<span class="dim">—</span>'}</td>
+    <td class="n" data-l="Protein / 36 g">${gm(r.prot36)}</td><td class="n" data-l="Protein / ₹100">${r.p100 ? r.p100.toFixed(1) + ' g' : '<span class="dim">—</span>'}</td>
+    <td class="n c-bcaa">${gm(r.bcaa36, 2)}</td>
+    <td class="n" data-l="Label info">${labelDots(r)}</td>
+    <td class="c-link"><a href="${esc(r.url)}" target="_blank" rel="noopener">Amazon ↗</a></td></tr>`).join('');
+  $('view-table').innerHTML = list.length ? `<p class="hint"><b>Label serving</b> is the scoop size the brand prints (25–50 g). The <b>/ 36 g</b> columns rescale every tub to one standard scoop so they compare fairly. Hover or tap a badge to see what it means.</p><div class="tblwrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    ${list.length > limit ? `<button class="more" id="more" type="button">Show ${Math.min(200, list.length - limit)} more of ${list.length - limit}</button>` : ''}`
+    : `<p class="empty">No listings match these filters. Loosen the price or protein sliders, or reset filters.</p>`;
+}
+$('view-table').addEventListener('click', e => {
+  const th = e.target.closest('th.s');
+  if (th) { const k = th.dataset.k; sort = sort.k === k ? {k, dir:-sort.dir} : {k, dir:['prot', 'prot36', 'p100', 'bcaa36', 'disc', 'grams', 'trust'].includes(k) ? -1 : 1}; renderAll(); }
+  if (e.target.id === 'more') { limit += 200; renderAll(); }
+});
+$('view-table').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('th.s')) e.target.click(); });
+
+// ---------- brands ----------
+function renderBrands(list) {
+  const g = new Map();
+  list.forEach(r => { if (!g.has(r.brand)) g.set(r.brand, new Map()); const m = g.get(r.brand); const k = r.name + '|' + r.type;
+    if (!m.has(k)) m.set(k, []); m.get(k).push(r); });
+  let arr = [...g.entries()].map(([b, m]) => ({b, offs:[...m.values()], best:Math.min(...[...m.values()].flat().map(r => r.p36 ?? Infinity)), n:[...m.values()].flat().length}));
+  arr.sort((a, b) => sort.k === 'brand' ? a.b.localeCompare(b.b) * sort.dir : sort.k === 'p36' ? (a.best - b.best) : b.n - a.n);
+  const open = F.q.length > 1 || F.brand;
+  $('view-brands').innerHTML = arr.length ? arr.slice(0, limit / 2).map(x => `<details class="brand"${open ? ' open' : ''}>
+    <summary><span class="bname">${esc(x.b)}</span><span class="bmeta">${x.offs.length} product line${x.offs.length > 1 ? 's' : ''} · ${x.n} listings · from <b>${isFinite(x.best) ? rs(x.best) : '—'}</b> / 36 g</span>
+      <span class="bdots">${[...new Set(x.offs.map(o => o[0].type))].map(dot).join('')}</span></summary>
+    ${x.offs.map(vs => { const o = vs[0]; return `<div class="offer">${thumb(o)}<div style="min-width:0">
+      <div class="oname">${esc(o.name)} <span class="tchip">${dot(o.type)}${esc(o.type)}</span></div>
+      <p class="ometa"><strong>Flavours:</strong> ${o.flavours.length ? esc(o.flavours.join(', ')) : '<span class="dim">single / not listed</span>'}</p>
+      <p class="ometa"><strong>Composition:</strong> ${o.ingredients ? esc(o.ingredients) : '<span class="dim">ingredients not listed in text on Amazon</span>'}</p>
+      <div class="mini"><table><thead><tr><th></th><th>Flavour</th><th>Pack</th><th class="n">Price</th><th class="n">MRP</th><th class="n">₹ / 36 g</th><th class="n">Protein / label serving</th><th class="n">Protein / 36 g</th><th class="n">BCAA / 36 g</th><th>Signals</th><th></th></tr></thead>
+      <tbody>${sorted(vs).map(r => `<tr><td>${cbox(r)}</td><td>${esc(r.flavour) || '<span class="dim">—</span>'}</td><td>${esc(r.size)}</td><td class="n">${rs(r.price)}</td><td class="n dim">${rs(r.mrp)}</td>
+        <td class="n key">${rs(r.p36)}${r.outlier ? '<span class="flag">outlier</span>' : ''}</td><td class="n">${gm(r.prot)}</td><td class="n">${gm(r.prot36)}</td><td class="n">${gm(r.bcaa36, 2)}</td><td>${labelDots(r)} ${badges(r)}</td>
+        <td><a href="${esc(r.url)}" target="_blank" rel="noopener">Amazon ↗</a></td></tr>`).join('')}</tbody></table></div></div></div>`; }).join('')}
+    </details>`).join('') + (arr.length > limit / 2 ? `<button class="more" id="moreB" type="button">Show more brands (${arr.length - limit / 2} left)</button>` : '')
+    : `<p class="empty">No brands match these filters.</p>`;
+}
+$('view-brands').addEventListener('click', e => { if (e.target.id === 'moreB') { limit += 120; renderAll(); } });
+
+// ---------- compare view ----------
+function renderCompare() {
+  const L = CMP.map(id => byId[id]);
+  if (!L.length) { $('view-compare').innerHTML = `<div class="cmp-empty"><b>Rack is empty</b>Tick the box beside any listing in the Table, Brands or Best lifts sections to add it here. Up to four at a time.</div>`; return; }
+  const best = (k, hi) => { const v = L.map(r => r[k]).filter(x => x != null); if (v.length < 2) return null; return hi ? Math.max(...v) : Math.min(...v); };
+  const spec = [
+    ['Protein type', r => `<span class="tchip">${dot(r.type)}${esc(r.type)}</span>`],
+    ['Flavour', r => esc(r.flavour) || '—'], ['Pack size', r => esc(r.size)],
+    ['Price', r => rs(r.price), 'price', 0], ['MRP', r => rs(r.mrp)], ['Discount', r => r.disc >= 1 ? Math.round(r.disc) + '%' : '—', 'disc', 1],
+    ['₹ per 36 g scoop', r => rs(r.p36), 'p36', 0], ['₹ per kg', r => rs(r.pkg), 'pkg', 0],
+    ['Protein / label serving', r => gm(r.prot), 'prot', 1], ['Label serving size', r => r.scoop ? gm(r.scoop) + (r.derived ? '*' : '') : '—'],
+    ['Protein / 36 g', r => gm(r.prot36), 'prot36', 1], ['Protein per ₹100', r => r.p100 ? r.p100.toFixed(1) + ' g' : '—', 'p100', 1],
+    ['BCAA / label serving', r => gm(r.bcaa, 2), 'bcaa', 1], ['BCAA / 36 g', r => gm(r.bcaa36, 2), 'bcaa36', 1],
+    ['Trust signals', r => badges(r) || '<span class="dim">none</span>'], ['Label transparency', r => `${labelDots(r)} ${r.label}/4`, 'label', 1],
+    ['Flavours offered', r => `<span class="txt">${esc(r.flavours.join(', ')) || '—'}</span>`],
+    ['Composition', r => `<span class="txt">${esc(r.ingredients) || 'not listed in text'}</span>`],
+    ['', r => `<a href="${esc(r.url)}" target="_blank" rel="noopener">View on Amazon ↗</a>`]];
+  let h = `<div class="rl"></div>` + L.map(r => `<div class="hd">${thumb(r)}<div class="b">${esc(r.brand)}</div><div class="t">${esc(r.name)}</div>
+    <button class="rm" type="button" data-rm="${esc(r.id)}">Remove</button></div>`).join('');
+  spec.forEach(([lbl, fn, k, hi]) => { const b = k ? best(k, hi) : null;
+    h += `<div class="rl">${lbl}</div>` + L.map(r => `<div class="v${b != null && r[k] === b ? ' win' : ''}">${fn(r)}</div>`).join(''); });
+  $('view-compare').innerHTML = `<p class="section-sub" style="margin-top:16px">Green dot marks the best value in each row: lowest price, highest protein, biggest discount.</p>
+    <div class="cmp"><div class="cmpgrid" style="grid-template-columns:var(--rl,150px) repeat(${L.length},minmax(var(--cw,200px),1fr))">${h}</div></div>`;
+}
+
+// ---------- views ----------
+function setView(v) {
+  view = v; limit = 120;
+  ['table', 'brands', 'compare'].forEach(k => { $('tab-' + k).setAttribute('aria-selected', k === v); $('view-' + k).hidden = k !== v; });
+  $('filters').hidden = v === 'compare'; $('summary').hidden = v === 'compare';
+  renderAll(); renderTray();
+}
+['table', 'brands', 'compare'].forEach(k => $('tab-' + k).addEventListener('click', () => setView(k)));
+
+function renderAll() {
+  document.querySelectorAll('#legend button').forEach(b => b.setAttribute('aria-pressed', b.dataset.fam === F.fam));
+  document.querySelectorAll('#goals .goal').forEach(b => b.setAttribute('aria-pressed', b.dataset.goal === F.preset));
+  const sv = sort.k + ':' + sort.dir; $('msort').value = [...$('msort').options].some(o => o.value === sv) ? sv : '';
+  if (view === 'compare') return renderCompare();
+  const list = filtered();
+  const p36 = list.map(r => r.p36).filter(Boolean), pr = list.map(r => r.prot36).filter(Boolean);
+  $('summary').innerHTML = (F.preset ? `<span>Goal <b>${esc(PRE[F.preset].l)}</b> <button class="reset" type="button" data-clear-goal>clear</button></span>` : '') + `<span><b>${list.length}</b> listings</span><span><b>${new Set(list.map(r => r.brand)).size}</b> brands</span>
+    <span>median <b>${rs(median(p36))}</b> / 36 g</span><span>cheapest <b>${rs(p36.length ? Math.min(...p36) : null)}</b></span>
+    <span>median protein <b>${pr.length ? median(pr).toFixed(1) + ' g' : '—'}</b> / 36 g</span>`;
+  view === 'table' ? renderTable(list) : renderBrands(list);
+}
+
+readControls(); renderBoard(); setView('table');
+
+// ---------- Spotter: keyword-matching chatbot ----------
+(function spotter() {
+  const norm = s => ' ' + String(s).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+  const compact = s => s.replace(/ /g, '');
+
+  // brand index: full name, name minus generic suffixes, and hand-picked aliases
+  const SUFFIX = /\b(nutrition|nutritions|health|healthcare|health care|supplements?|sports?|science|pvt|ltd|india|labs?|wellness|organics|foods)\b/g;
+  const ALIAS = {'mb':'MuscleBlaze', 'optimum':'Optimum Nutrition', 'gold standard':'Optimum Nutrition', 'avatar':'Avvatar', '1mg':'Tata 1mg',
+    'whole truth':'The Whole Truth', 'twt':'The Whole Truth', 'fast and up':'FAST&UP', 'fastup':'FAST&UP', 'big muscles':'Bigmuscles Nutrition',
+    'beast life':'BEASTLIFE', 'plix':'PLIX - THE PLANT FIX', 'ronnie coleman':'Ronnie Coleman Signature Series', 'mettle':'getmymettle'};
+  const BRANDS = [...new Set(ROWS.map(r => r.brand))];
+  const BKEYS = [];
+  BRANDS.forEach(b => { const n = norm(b).trim(); if (n.length >= 3) BKEYS.push([n, b]);
+    const s = n.replace(SUFFIX, '').replace(/\s+/g, ' ').trim(); if (s !== n && s.length >= 4) BKEYS.push([s, b]); });
+  Object.entries(ALIAS).forEach(([k, b]) => BRANDS.includes(b) && BKEYS.push([k, b]));
+  BKEYS.sort((a, b) => b[0].length - a[0].length);
+
+  // protein categories, most specific first; first match wins
+  const vegan = r => r.fam === 'plant' || r.type === 'Yeast Protein' || r.type === 'Multi-source Blend (Yeast + Plant)';
+  const CATS = [
+    [/ hydroly/, 'hydrolysed whey', r => r.type === 'Whey Hydrolysate', {type:'Whey Hydrolysate'}],
+    [/ pea /, 'pea protein', r => r.type === 'Pea Protein', {type:'Pea Protein'}],
+    [/ soy/, 'soy protein', r => r.type === 'Soy Protein', {type:'Soy Protein'}],
+    [/ yeast/, 'yeast protein', r => r.type === 'Yeast Protein', {type:'Yeast Protein'}],
+    [/ casein/, 'casein', r => r.type === 'Casein', {type:'Casein'}],
+    [/ egg/, 'egg white protein', r => r.type === 'Egg White Protein', {type:'Egg White Protein'}],
+    [/ milk protein/, 'milk protein', r => r.type === 'Milk Protein', {type:'Milk Protein'}],
+    [/ (health|nutrition) drink| kids? | elderly | senior/, 'health drinks', r => r.type === 'Health / Nutrition Drink Powder', {type:'Health / Nutrition Drink Powder'}],
+    [/ (blend|mixed|multi)/, 'multi-source blends', r => r.fam === 'blend', {fam:'blend'}],
+    [/ vegan | dairy free | lactose free | no dairy | non dairy /, 'vegan (plant + yeast)', vegan, {fam:'plant'}],
+    [/ plant/, 'plant protein', r => r.fam === 'plant', {fam:'plant'}],
+    [/ (isolate|iso|wpi) /, 'whey isolate', r => r.type === 'Whey Isolate', {type:'Whey Isolate'}],
+    [/ (concentrate|wpc) /, 'whey concentrate', r => /^Whey Concentrate/.test(r.type), {fam:'whey', q:'concentrate'}],
+    [/ whey/, 'whey', r => r.fam === 'whey', {fam:'whey'}],
+  ];
+  const FLAVS = [
+    [/ (choc|chocolate|cocoa|cacao)/, 'chocolate', /choc|cocoa|cacao/],
+    [/ vanilla/, 'vanilla', /vanilla/],
+    [/ (coffee|mocha|latte|espresso|cafe|caffe)/, 'coffee', /coffee|mocha|caf/],
+    [/ mango/, 'mango', /mango/],
+    [/ (kulfi|kesar|pista|malai|indian)/, 'kulfi / kesar', /kulfi|kesar|pista|malai/],
+    [/ strawberr/, 'strawberry', /strawberr/], [/ banana/, 'banana', /banana/], [/ cookie/, 'cookies & cream', /cookie/],
+    [/ hazelnut/, 'hazelnut', /hazel/], [/ caramel/, 'caramel', /caramel/], [/ coconut/, 'coconut', /coconut/],
+    [/ (unflavou?red|plain|raw|no flavou?r|natural) /, 'unflavoured', /unflav|plain|natural|raw/],
+  ];
+  const GOALS = [
+    [/ (value|bang for|per rupee|per rs|per ₹|worth|efficient|vfm) /, {k:'p100', dir:-1, l:'Best value (most protein per ₹100)'}],
+    [/ (cheap|cheapest|budget|afford|affordable|lowest price|low cost|inexpensive|economical|lowest) /, {k:'p36', dir:1, l:'Cheapest per 36 g scoop'}],
+    [/ (most protein|high protein|highest protein|protein rich|max protein|protein dense|lean) /, {k:'prot36', dir:-1, l:'Most protein per 36 g'}],
+    [/ bcaa/, {k:'bcaa36', dir:-1, l:'Most BCAA per 36 g', needB:1}],
+    [/ (discount|deal|offer|sale |saving)/, {k:'disc', dir:-1, l:'Biggest discounts'}],
+    [/ (premium|expensive|luxury|imported) /, {k:'p36', dir:-1, l:'Most premium per scoop'}],
+    [/ (bulk pack|bulk buy|biggest|largest|big pack) /, {k:'grams', dir:-1, l:'Biggest packs'}],
+    [/ (trust|trustworthy|reliable|transparent) /, {k:'trust', dir:-1, l:'Most trustworthy labels'}],
+  ];
+  const FAQ = [
+    [/ (fake|spik|red flag|badge|signal|too cheap|added amino|lab test claim|trust signal)/, 'Each listing gets trust signals from its own text. <b>Lab-test claim</b>: it cites a third-party test such as Trustified, Labdoor or Informed Choice. That is the seller’s claim, not something verified here. Red flags: <b>Too cheap?</b> (protein per ₹ far above other dairy proteins), <b>Added aminos</b> (free glycine, taurine and similar in the ingredients, a sign of possible “amino spiking”), <b>Protein % high</b> (over 92% protein per serving) and <b>Unbranded</b>. Treat them as prompts to check reviews or a lab report, not as verdicts.<div class="chips"><button class="chip" type="button" data-say="Lab-tested whey">Lab-tested whey</button></div>'],
+    [/ (label serving|serving size|per serving)/, 'The <b>label serving</b> is the scoop size the brand prints, anywhere from about 25 g to 50 g, so “24 g protein per serving” can mean very different things. The <b>/ 36 g</b> numbers rescale every product to one standard scoop, so compare those.'],
+    [/ outlier/, 'Outliers are sachets, trial packs and imports priced over ₹400 or under ₹15 per 36 g scoop. They’re hidden by default so they don’t skew the rankings. Say “include outliers” in your question to see them.'],
+    [/ (per 100|per rupee|per rs|p100)| value mean/, '<b>Protein per ₹100</b> = protein in a 36 g scoop ÷ ₹ per 36 g × 100. It tells you how many grams of protein ₹100 buys you, which makes it the fairest value-for-money number here.'],
+    [/ (36 ?g|scoop size|why 36)/, 'Every brand uses a different scoop (30 g, 33 g, 45 g…), so all prices and protein figures are rescaled to a common <b>36 g scoop</b>. That makes them directly comparable. A * after the scoop size means it was worked out from net weight ÷ servings.'],
+    [/ (what (is|are) (a )?bcaa|bcaas? mean)/, 'BCAAs (leucine, isoleucine, valine) are the amino acids most linked to muscle protein synthesis. Good whey usually has 5–6 g per scoop. Many listings don’t state BCAA, so filter on “BCAA stated” when it matters to you.'],
+    [/ (difference|isolate vs|concentrate vs|what is (an? )?(isolate|concentrate|hydrolysate|whey isolate|whey concentrate) )/, '<b>Concentrate</b> (~70–80% protein) is the cheapest per scoop. <b>Isolate</b> (~90%) has less fat and lactose, which suits sensitive stomachs. <b>Hydrolysate</b> is pre-digested for faster absorption and usually costs the most. Plant and yeast proteins suit people who avoid dairy.'],
+    [/ (updated|fresh|date|accurate|how old|when)/, 'Prices were captured on <b>20 Oct 2026</b> and change daily, so check the live listing before you buy.'],
+  ];
+  const STOP = new Set('the a an and or of for to in on me my i want need show find give get some any best good top which what is are with without protein powder powders please list per scoop under below g kg flavour flavor flavoured taste tasting cheap cheapest value most high highest'.split(' '));
+
+  function parse(text) {
+    let q = norm(text);
+    const raw = text.toLowerCase();
+    const p = {brands:[], cat:null, flav:null, goal:null, maxP36:null, maxPrice:null, minProt:null, pack:null, outliers:/outlier|sachet|trial/.test(raw)};
+    for (const [k, b] of BKEYS) {
+      if (q.includes(' ' + k + ' ') || (!k.includes(' ') && k.length >= 6 && compact(q).includes(k))) {
+        if (!p.brands.includes(b)) p.brands.push(b); q = q.replace(' ' + k + ' ', ' ');
+      }
+    }
+    p.cat = CATS.find(c => c[0].test(q)) || null;
+    p.flav = FLAVS.find(f => f[0].test(q)) || null;
+    p.goal = (GOALS.find(g => g[0].test(q)) || [])[1] || null;
+    const pr = raw.match(/(\d{1,2}(?:\.\d)?)\s*(?:g|gm|gms|grams?)\s*(?:\+\s*)?(?:of\s+)?protein/) || raw.match(/protein\s*(?:of\s*)?(?:at ?least|>=?|over|above|min(?:imum)?)\s*(\d{1,2})/);
+    if (pr) p.minProt = +pr[1];
+    const pk = [...raw.matchAll(/(\d+(?:\.\d+)?)\s*(kg|kgs|kilo|lbs?|g|gm|gms|grams?)\b/g)].map(m => +m[1] * (/^k/.test(m[2]) ? 1000 : /^lb/.test(m[2]) ? 453.6 : 1)).find(g => g >= 200);
+    if (pk) p.pack = pk;
+    const pm = raw.match(/(?:under|below|less than|cheaper than|within|upto|up to|max(?:imum)?|budget(?: of| is)?|<)\s*(?:rs\.?|₹|inr)?\s*(\d[\d,]*)(?![\d,]|\s*(?:kg|kgs|g|gm|gms|grams?|lbs?)\b)\s*(k\b)?/);
+    if (pm) { const n = +pm[1].replace(/,/g, '') * (pm[2] ? 1000 : 1);
+      if (/scoop|serving|serve|\/ ?36|per 36/.test(raw) || (n <= 400 && !/tub|pack|jar|total|kg/.test(raw))) p.maxP36 = n; else p.maxPrice = n; }
+    p.compare = / (compare|vs|versus) /.test(norm(text));
+    p.preset = PRESETS.find(x => x.kw.test(raw)) || null;
+    p.any = !!(p.brands.length || p.cat || p.flav || p.goal || p.preset || p.minProt || p.pack || p.maxP36 || p.maxPrice);
+    p.tokens = norm(q).trim().split(' ').filter(t => t.length >= 3 && !STOP.has(t) && !/^\d/.test(t));
+    return p;
+  }
+
+  function search(p) {
+    let L = ROWS.filter(r => (p.outliers || !r.outlier) &&
+      (!p.brands.length || p.brands.includes(r.brand)) && (!p.cat || p.cat[2](r)) &&
+      (!p.flav || p.flav[2].test((r.flavour || '').toLowerCase()) || (p.flav[1] === 'unflavoured' && /Raw/.test(r.type))) &&
+      (!p.maxP36 || (r.p36 != null && r.p36 <= p.maxP36)) && (!p.maxPrice || (r.price != null && r.price <= p.maxPrice)) &&
+      (!p.minProt || (r.prot36 != null && r.prot36 >= p.minProt)) && (!p.pack || (r.grams && Math.abs(r.grams - p.pack) / p.pack <= .12)) &&
+      (!p.goal || !p.goal.needB || r.bcaa36) && (!p.preset || p.preset.test(r)));
+    // with a brand named, leftover words (e.g. a product line like "biozyme") narrow the result when they hit some rows but not all
+    if (p.brands.length) p.tokens.forEach(t => { const m = L.filter(r => r.hay.includes(t)); if (m.length && m.length < L.length) L = m; });
+    const g = p.goal || (p.preset && {...p.preset.sort, l:p.preset.l + ' · ' + p.preset.d}) || (L.some(r => r.p100) ? {k:'p100', dir:-1} : {k:'p36', dir:1});
+    if (g.k !== 'disc' && g.k !== 'grams') L = L.filter(r => r[g.k] != null).concat(L.filter(r => r[g.k] == null));
+    L.sort((a, b) => { const x = a[g.k], y = b[g.k]; if (x == null) return 1; if (y == null) return -1; return (x - y) * g.dir; });
+    return {L, g};
+  }
+
+  // fall back to plain keyword overlap with the listing text
+  function fuzzy(p) {
+    if (!p.tokens.length) return [];
+    return ROWS.filter(r => !r.outlier).map(r => ({r, s:p.tokens.filter(t => r.hay.includes(t)).length})).filter(x => x.s)
+      .sort((a, b) => b.s - a.s || (b.r.p100 || 0) - (a.r.p100 || 0)).map(x => x.r);
+  }
+
+  const uniq = (L, n) => { const seen = new Set(), out = [];
+    for (const r of L) { const k = r.brand + '|' + r.name; if (seen.has(k)) continue; seen.add(k); out.push(r); if (out.length >= n) break; } return out; };
+
+  const hit = r => `<div class="hit">${thumb(r)}<div style="min-width:0">
+    <div class="hn">${esc(r.brand)} · ${esc(r.name)}</div>
+    <div class="hm"><span class="tchip">${dot(r.type)}${esc(r.type)}</span><span>${esc(r.size)}${r.flavour ? ' · ' + esc(r.flavour) : ''}</span></div>
+    <div class="hm"><span><b>${rs(r.p36)}</b> / 36 g</span><span>${r.prot36 != null ? `<b>${gm(r.prot36)}</b> protein / 36 g` : `<b>${gm(r.prot)}</b> protein / label serving`}</span>${r.p100 ? `<span><b>${r.p100.toFixed(1)} g</b> per ₹100</span>` : ''}<span>${rs(r.price)}</span></div>
+    ${badges(r) ? `<div>${badges(r)}</div>` : ''}<div class="ha"><label>${cbox(r)} Compare</label><a href="${esc(r.url)}" target="_blank" rel="noopener">Amazon ↗</a></div></div></div>`;
+
+  const SAVED = [];
+  const log = $('chatLog');
+  // scroll to the top of each new reply so long result lists read from the start
+  function say(html, who = 'bot') { log.insertAdjacentHTML('beforeend', `<div class="msg ${who}">${html}</div>`); log.scrollTop = log.lastElementChild.offsetTop - 8; }
+  const chips = arr => `<div class="chips">${arr.map(s => `<button class="chip" type="button" data-say="${esc(s)}">${esc(s)}</button>`).join('')}</div>`;
+  const EXAMPLES = ['Beginner whey', 'Lab-tested whey', 'Cheapest whey isolate', 'Best value vegan protein', 'Chocolate whey under ₹50 a scoop', 'Something easy on the stomach', 'Compare MuscleBlaze vs Avvatar', 'What does protein per ₹100 mean?'];
+
+  function describe(p, g) {
+    const bits = [];
+    if (p.flav) bits.push(p.flav[1]); if (p.cat) bits.push(p.cat[1]); if (p.brands.length) bits.push('from ' + p.brands.join(' / '));
+    if (p.maxP36) bits.push('under ₹' + p.maxP36 + '/scoop'); if (p.maxPrice) bits.push('under ₹' + p.maxPrice.toLocaleString('en-IN') + ' a pack');
+    if (p.minProt) bits.push(p.minProt + ' g+ protein'); if (p.pack) bits.push('~' + (p.pack >= 1000 ? +(p.pack / 1000).toFixed(1) + ' kg' : Math.round(p.pack) + ' g') + ' packs');
+    return `<b>${esc(g.l || (g.k === 'p100' ? 'Best value' : 'Cheapest per scoop'))}</b>${bits.length ? ' · ' + esc(bits.join(' · ')) : ''}`;
+  }
+
+  function reply(text) {
+    const n = norm(text);
+    if (/^ (hi|hey|hello|yo|help|start|menu|what can you do|how does this work) /.test(n) && n.split(' ').length < 7) {
+      return say(`<p>Tell me what you’re after, in plain words. I match keywords for <b>brand</b>, <b>protein type</b>, <b>flavour</b>, <b>budget</b>, <b>pack size</b>, <b>goal</b> (beginner, cutting, bedtime, vegan, lactose-sensitive) and <b>trust</b> (lab-tested). Every result shows its trust badges.</p>${chips(EXAMPLES)}`);
+    }
+    if (/ (reset|clear|start over) /.test(n)) { $('reset').click(); return say('Filters reset. The table is back to showing everything.'); }
+    if (/ (what|how|why|mean|explain|difference|when|is it) /.test(n)) {
+      const f = FAQ.find(x => x[0].test(n)); if (f) return say(`<p>${f[1]}</p>`);
+    }
+    if (/ (how many|list|all) brands /.test(n)) {
+      const top = [...new Set(ROWS.map(r => r.brand))].map(b => [b, ROWS.filter(r => r.brand === b).length]).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      return say(`<p>There are <b>${BRANDS.length}</b> brands and <b>${ROWS.length}</b> listings. The biggest line-ups:</p>${chips(top.map(([b]) => 'Best value ' + b))}`);
+    }
+
+    const p = parse(text);
+    let {L, g} = search(p), fuzzyUsed = false;
+    if (!p.any) { L = fuzzy(p); fuzzyUsed = true; }
+    if (!L.length) {
+      return say(`<p>Nothing matched that${p.any ? ' combination. Try dropping a filter, like the budget or pack size' : ''}. Try a brand, a protein type or a flavour:</p>${chips(EXAMPLES.slice(0, 4))}`);
+    }
+
+    if (p.compare) {
+      const picks = p.brands.length >= 2 ? p.brands.map(b => L.find(r => r.brand === b)).filter(Boolean) : uniq(L, 3);
+      CMP = picks.slice(0, 4).map(r => r.id); saveCmp(); setView('compare');
+      document.querySelector('.bar').scrollIntoView({behavior:'smooth'});
+      return say(`<p>I put the top pick${picks.length > 1 ? 's' : ''} in the compare rack and opened the Compare view. Green dots mark the winner in each row.</p>${uniq(picks, 4).map(hit).join('')}`);
+    }
+
+    const top = uniq(L, 5); SAVED.push(p);
+    const head = fuzzyUsed ? `<b>Keyword matches</b> for “${esc(p.tokens.join(' '))}”` : describe(p, g);
+    say(`<p>${head}. <b>${L.length}</b> listing${L.length > 1 ? 's' : ''} match. Here are the top ${top.length}:</p>${top.map(hit).join('')}
+      ${fuzzyUsed ? '' : `<div class="chips"><button class="chip act" type="button" data-table="${SAVED.length - 1}">Show all in the table →</button></div>`}`);
+  }
+
+  // mirror a parsed question onto the page's own filters
+  function toTable(p) {
+    $('reset').click();
+    if (p.brands.length === 1) $('brand').value = p.brands[0];
+    const c = p.cat && p.cat[3];
+    if (c && c.type) $('type').value = c.type;
+    if (p.flav) $('q').value = p.flav[1].split(' ')[0]; else if (c && c.q) $('q').value = c.q;
+    if (p.maxP36) $('maxp').value = Math.max(20, Math.min(400, Math.round(p.maxP36 / 5) * 5));
+    if (p.minProt) $('minpr').value = Math.min(32, p.minProt);
+    if (p.pack) $('pack').value = p.pack < 450 ? '0-450' : p.pack < 1100 ? '450-1100' : p.pack < 2100 ? '1100-2100' : '2100-99999';
+    if (p.goal && p.goal.needB) $('needB').checked = true;
+    if (p.outliers) $('hideOut').checked = false;
+    readControls();
+    F.fam = c && c.fam ? c.fam : ''; F.preset = p.preset ? p.preset.k : '';
+    const g = p.goal || (p.preset && p.preset.sort) || {k:'p100', dir:-1}; sort = {k:g.k, dir:g.dir};
+    setView('table');
+    document.querySelector('.bar').scrollIntoView({behavior:'smooth'});
+    if (innerWidth < 700) toggle(false);
+  }
+
+  function toggle(open) {
+    $('chat').hidden = !open; $('ask').setAttribute('aria-expanded', open);
+    $('ask').textContent = open ? 'Close Spotter' : 'Ask Spotter';
+    if (open) { if (!log.children.length) reply('help'); $('chatIn').focus(); }
+  }
+  $('ask').addEventListener('click', () => toggle($('chat').hidden));
+  $('chatX').addEventListener('click', () => { toggle(false); $('ask').focus(); });
+  $('chat').addEventListener('keydown', e => { if (e.key === 'Escape') { toggle(false); $('ask').focus(); } });
+  $('chatF').addEventListener('submit', e => { e.preventDefault(); const t = $('chatIn').value.trim(); if (!t) return;
+    say(esc(t), 'me'); $('chatIn').value = ''; reply(t); });
+  log.addEventListener('click', e => {
+    const s = e.target.closest('[data-say]'); if (s) { say(esc(s.dataset.say), 'me'); reply(s.dataset.say); }
+    const t = e.target.closest('[data-table]'); if (t) toTable(SAVED[+t.dataset.table]);
+  });
+})();
+</script>
+
+</body></html>
