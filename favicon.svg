@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- happy protein tub -->
+  <rect x="17" y="6" width="30" height="5" rx="2.5" fill="#f2c230"/>
+  <rect x="13" y="10" width="38" height="9" rx="4" fill="#f2c230"/>
+  <rect x="11" y="17" width="42" height="42" rx="10" fill="#d8382c"/>
+  <rect x="11" y="30" width="42" height="17" fill="#f0ede6"/>
+  <circle cx="24.5" cy="37" r="2.6" fill="#141518"/>
+  <circle cx="39.5" cy="37" r="2.6" fill="#141518"/>
+  <circle cx="25.4" cy="36.1" r=".9" fill="#fff"/>
+  <circle cx="40.4" cy="36.1" r=".9" fill="#fff"/>
+  <path d="M28 40.5q4 3.6 8 0" stroke="#141518" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <ellipse cx="19.5" cy="41.5" rx="2.6" ry="1.6" fill="#f2a3a0"/>
+  <ellipse cx="44.5" cy="41.5" rx="2.6" ry="1.6" fill="#f2a3a0"/>
+  <path d="M21 22.5h6M49 22.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>
+</svg>
